@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Clock</title>
+    <style>
+        * {
+            font-family: Helvetica, sans-serif;
+        }
+        #time-remaining {
+            display: flex;
+            font-size: 10em;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            caret-color: transparent;
+        }
+    </style>
+    <script>
+        let running = false;
+        function updateTime(startTime, durationInMs) {
+            const timeRemainingMs = durationInMs - (new Date() - startTime);
+            const timeRemaining = new Date(timeRemainingMs)
+            const timeRemainingComponents = [];
+            if (timeRemaining.getUTCHours() > 0) {
+                timeRemainingComponents.push(`${timeRemaining.getUTCHours()}`.padStart(2, '0'));
+            }
+            if (timeRemaining.getUTCMinutes() > 0) {
+                timeRemainingComponents.push(`${timeRemaining.getUTCMinutes()}`.padStart(2, '0'));
+            }
+            timeRemainingComponents.push(`${timeRemaining.getUTCSeconds()}`.padStart(2, '0'));
+            if (timeRemainingMs > 0 && running) {
+                document.getElementById('time-remaining').textContent = timeRemainingComponents.join(":")
+                setTimeout(() => updateTime(startTime, durationInMs), 1000)
+            } else {
+                document.getElementById('time-remaining').textContent = "Time's up!"
+            }
+        }
+
+        function startTimer() {
+            running = true
+            const startTime = new Date()
+            const duration = document.getElementById('time-remaining').textContent
+            const timeElts = duration.split(':')
+            let hours = 0, mins = 0, secs = 0
+            switch (timeElts.length) {
+                case 1:
+                    secs = parseInt(timeElts[0], 10)
+                    break
+                case 2:
+                    mins = parseInt(timeElts[0], 10)
+                    secs = parseInt(timeElts[1], 10)
+                    break
+                case 3:
+                    hours = parseInt(timeElts[0], 10)
+                    mins = parseInt(timeElts[1], 10)
+                    secs = parseInt(timeElts[2], 10)
+                    break
+            }
+            const durationInMs = ((hours * 3600) + (mins * 60) + secs) * 1000
+            setTimeout(() => updateTime(startTime, durationInMs), 500)
+        }
+    </script>
+</head>
+<body>
+<span id="time-remaining" contenteditable="true" autofocus></span>
+<script>
+    document.getElementById('time-remaining').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            startTimer()
+            e.preventDefault()
+            e.stopPropagation()
+        } else if (e.key === 'Escape') {
+            running = false
+        }
+    })
+</script>
+</body>
+</html>
