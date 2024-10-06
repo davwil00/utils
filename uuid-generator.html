@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UUID Generator</title>
+    <script>
+        function generateUUID() {
+            const uuid = crypto.randomUUID()
+            document.getElementById('output').textContent = uuid
+        }
+        function copyToClipboard() {
+            const type = "text/plain";
+            const uuid = document.getElementById('output').textContent
+            const blob = new Blob([uuid], { type });
+            const data = [new ClipboardItem({ [type]: blob })];
+            navigator.clipboard.write(data);
+        }
+    </script>
+    <style>
+        #output {
+            font-family: monospace;
+            font-size: 16px;
+            display: block;
+            padding: 10px
+        }
+    </style>
+</head>
+<body onload="generateUUID()">
+<code id="output"></code>
+<button id="generate" onclick="generateUUID()">Generate</button>
+<button id="copy" onclick="copyToClipboard()">Copy</button>
+</body>
+</html>
