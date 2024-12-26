@@ -4,147 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Jumble</title>
-    <style>
-        .letter-container {
-            display: flex;
-            justify-content: center;
-            font-size: 2em;
-            gap: 1em;
-            font-family: monospace;
-            flex-wrap: wrap;
-            margin: 1em auto 0;
-            text-transform: uppercase;
-
-            @media (min-width: 576px) {
-                font-size: 3em;
-            }
-            @media (min-width: 768px) {
-                font-size: 4em;
-            }
-            @media (min-width: 992px) {
-                font-size: 5em;
-            }
-            @media (min-width: 1200px) {
-                font-size: 6em;
-            }
-            @media (min-width: 1400px) {
-                font-size: 8em;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="index.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"></script>
-    <script src="./jumble-words.js"></script>
-    <script>
-        function shuffle(anagram) {
-            return anagram.split("")
-                .filter(char => char !== " ")
-                .map(value => ({value, sort: Math.random()}))
-                .sort((a, b) => a.sort - b.sort)
-                .map(({value}) => value);
-        }
-
-        function findWordMatchingPattern() {
-            const pattern = document.getElementById("word-finder-pattern").value;
-            const regex = RegExp(`^${pattern}$`);
-            const wordList = document.getElementById("word-list");
-            wordList.innerHTML = "";
-            const matchedWords = dict.filter(word => regex.test(word))
-            if (matchedWords.length === 0) {
-                const li = document.createElement("li");
-                li.innerText = "No words found";
-                wordList.append(li);
-            } else {
-                matchedWords.forEach(word => {
-                    const li = document.createElement("li");
-                    li.innerText = word;
-                    wordList.append(li);
-                });
-            }
-        }
-
-        function generateJumble() {
-            const anagram = document.getElementById("anagram").value;
-            if (!anagram) {
-                return;
-            }
-            const pattern = new RegExp(document.getElementById("pattern").value);
-            let shuffled;
-            let shuffles = 0
-            do {
-                shuffled = shuffle(anagram);
-                shuffles++;
-            } while (shuffles < 100 && !pattern.test(shuffled.join("")));
-            const containerElt = document.getElementById("container");
-            containerElt.innerHTML = "";
-            const format = document.getElementById("format").value.split("").map(it => parseInt(it));
-            if (format.length > 0 && format.reduce((acc, curr) => acc + curr, 0) === shuffled.length) {
-                format.forEach(length => {
-                    const div = document.createElement("div");
-                    div.classList.add("letter-container");
-                    for (let i = 0; i < length; i++) {
-                        const letter = shuffled.pop();
-                        const span = document.createElement("span");
-                        span.innerText = letter;
-                        div.append(span);
-                    }
-                    containerElt.append(div);
-                });
-            } else {
-                const div = document.createElement("div");
-                div.classList.add("letter-container");
-                shuffled.forEach(letter => {
-                    const span = document.createElement("span");
-                    span.innerText = letter;
-                    div.append(span);
-                });
-                containerElt.append(div);
-            }
-        }
-
-        function check() {
-            const anagram = new Set(document.getElementById("anagram").value.toLowerCase().split(""));
-            const removeElt = document.getElementById("remove");
-            const lettersToCheck = new Set(removeElt.value.toLowerCase().split(""));
-            if (anagram.size === lettersToCheck.size && [...anagram].every((x) => lettersToCheck.has(x))) {
-                removeElt.style.color = "green";
-            } else {
-                removeElt.style.color = "red";
-            }
-        }
-
-        function removeLetters() {
-            const anagramElt = document.getElementById("anagram");
-            const anagram = anagramElt.value.toLowerCase().split("");
-            const removeElt = document.getElementById("remove");
-            const lettersToRemove = removeElt.value.toLowerCase().split("");
-            for (const letter of lettersToRemove) {
-                const index = anagram.indexOf(letter);
-                if (index >= 0) {
-                    anagram.splice(index, 1);
-                } else {
-                    removeElt.style.color = "red";
-                    return;
-                }
-            }
-
-            removeElt.style.color = "black";
-            anagramElt.value = anagram.join("");
-            generateJumble();
-        }
-
-        function clearInput(eltId) {
-            if (eltId) {
-                document.getElementById(eltId).value = "";
-            } else {
-                Array.from(document.getElementsByTagName('input')).forEach(input => input.value = "");
-            }
-            document.getElementById("word-list").innerHTML = "";
-        }
-    </script>
+    <script src="dict.js"></script>
+    <script src="index.js"></script>
 </head>
 <body>
 <ul class="nav nav-tabs mb-4" role="tablist">
@@ -163,21 +30,47 @@
 </ul>
 <div class="tab-content mx-4">
     <div class="tab-pane show active" id="anagram-pane" role="tabpanel" aria-labelledby="anagram-tab">
-        <div class="form-floating col-sm-3 mb-3">
-            <input type="text" id="anagram" class="form-control"/>
-            <label for="anagram">Letters</label>
-        </div>
-        <div class="form-floating col-sm-3 mb-3">
-            <input type="text" id="anagram-pattern" name="pattern" class="form-control"/>
-            <label for="anagram-pattern">Pattern</label>
-        </div>
-        <div class="form-floating col-sm-3 mb-3">
-            <input type="text" id="remove" class="form-control"/>
-            <label for="remove">Remove</label>
-        </div>
-        <div class="form-floating col-sm-3 mb-3">
-            <input type="text" id="format" class="form-control"/>
-            <label for="format">Format</label>
+        <div class="col-sm-3">
+            <div class="input-group mb-3">
+                <div class="form-floating">
+                    <input type="text" id="anagram" class="form-control"/>
+                    <label for="anagram">Letters</label>
+                </div>
+                <button type="button" onclick="clearInput('anagram')" class="btn btn-sm bg-transparent"
+                        style="margin-left: -40px; z-index: 100;">
+                    <i class="bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="input-group mb-3">
+                <div class="form-floating">
+                    <input type="text" id="anagram-pattern" name="pattern" class="form-control"/>
+                    <label for="anagram-pattern">Pattern</label>
+                </div>
+                <button type="button" onclick="clearInput('anagram-pattern')" class="btn btn-sm bg-transparent"
+                        style="margin-left: -40px; z-index: 100;">
+                    <i class="bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="input-group mb-3">
+                <div class="form-floating">
+                    <input type="text" id="remove" class="form-control"/>
+                    <label for="remove">Remove</label>
+                </div>
+                <button type="button" onclick="clearInput('remove')" class="btn btn-sm bg-transparent"
+                        style="margin-left: -40px; z-index: 100;">
+                    <i class="bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="input-group mb-3">
+                <div class="form-floating col-sm-3 mb-3">
+                    <input type="text" id="format" class="form-control"/>
+                    <label for="format">Format</label>
+                </div>
+                <button type="button" onclick="clearInput('format')" class="btn btn-sm bg-transparent"
+                        style="margin-left: -40px; z-index: 100;">
+                    <i class="bi-x-lg"></i>
+                </button>
+            </div>
         </div>
         <button type="button" onclick="generateJumble();" class="btn btn-primary">Go!</button>
         <button type="button" onclick="removeLetters();" class="btn btn-secondary">Remove</button>
