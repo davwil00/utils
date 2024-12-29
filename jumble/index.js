@@ -30,7 +30,7 @@ function generateJumble() {
     if (!anagram) {
         return;
     }
-    const pattern = new RegExp(document.getElementById("pattern").value);
+    const pattern = new RegExp(document.getElementById("anagram-pattern").value);
     let shuffled;
     let shuffles = 0
     do {
