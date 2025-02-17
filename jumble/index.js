@@ -51,13 +51,13 @@ function generateJumble() {
 
     const containerElt = document.getElementById("container");
     containerElt.innerHTML = "";
-    const format = document.getElementById("format").value.split("").map(it => parseInt(it));
+    const format = document.getElementById("format").value.split("").map(parseInt);
     if (format.length > 0 && format.reduce((acc, curr) => acc + curr, 0) === shuffled.length) {
         format.forEach(length => {
             const div = document.createElement("div");
             div.classList.add("letter-container");
             for (let i = 0; i < length; i++) {
-                const letter = shuffled.pop();
+                const letter = shuffled[i];
                 const span = document.createElement("span");
                 span.innerText = letter;
                 div.append(span);
