@@ -1,5 +1,5 @@
 function shuffle(anagram) {
-    return anagram.split("")
+    return anagram
         .filter(char => char !== " ")
         .map(value => ({value, sort: Math.random()}))
         .sort((a, b) => a.sort - b.sort)
@@ -30,13 +30,25 @@ function generateJumble() {
     if (!anagram) {
         return;
     }
-    const pattern = new RegExp(document.getElementById("anagram-pattern").value);
-    let shuffled;
-    let shuffles = 0
-    do {
-        shuffled = shuffle(anagram);
-        shuffles++;
-    } while (shuffles < 100 && !pattern.test(shuffled.join("")));
+    const pattern = document.getElementById("anagram-pattern").value;
+
+    const shuffled = Array(anagram.length)
+    const lettersToBeShuffled = anagram.split('')
+
+    for (let i = 0; i < anagram.length; i++) {
+        if (pattern[i] !== '.') {
+            shuffled[i] = pattern[i];
+            lettersToBeShuffled[i] = undefined;
+        }
+    }
+
+    const shuffledRemaining = shuffle(lettersToBeShuffled.filter(it => it !== undefined));
+    for (let i = 0; i < shuffled.length; i++) {
+        if (shuffled[i] === undefined) {
+            shuffled[i] = shuffledRemaining.pop()
+        }
+    }
+
     const containerElt = document.getElementById("container");
     containerElt.innerHTML = "";
     const format = document.getElementById("format").value.split("").map(it => parseInt(it));
@@ -97,9 +109,12 @@ function removeLetters() {
 
 function clearInput(eltId) {
     if (eltId) {
-        document.getElementById(eltId).value = "";
+        const elt = document.getElementById(eltId);
+        elt.value = "";
+        elt.focus()
     } else {
         Array.from(document.getElementsByTagName('input')).forEach(input => input.value = "");
     }
     document.getElementById("word-list").innerHTML = "";
+    document.getElementById("container").innerHTML = "";
 }
