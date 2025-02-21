@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lucky 13</title>
+    <script>
+        const numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'];
+        const suits = ['H', 'D', 'C', 'S'];
+        const deck = suits.flatMap(suit => numbers.map(card => `${card}${suit}`));
+
+        function pick13() {
+            shuffle(deck)
+            const cards = deck.slice(0, 13);
+            cards.sort((card1, card2) => {
+                if (card1[1] === card2[1]) return numbers.indexOf(card1[0]) - numbers.indexOf(card2[0])
+                return suits.indexOf(card1[1]) - suits.indexOf(card2[1])
+            })
+            document.getElementById('cards').innerHTML = ''
+            cards.map(card => {
+                const img = document.createElement('img')
+                img.src = `cards/${card}.svg`
+                const li = document.createElement('li')
+                li.appendChild(img)
+                document.getElementById('cards').appendChild(li)
+            })
+        }
+
+        function shuffle(a, b, c, d) {
+            // From https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array#answer-25984542
+            c = a.length;
+            while (c) {
+                b = Math.random() * c-- | 0;
+                d = a[c];
+                a[c] = a[b];
+                a[b] = d;
+            }
+        }
+    </script>
+    <style>
+        * {
+            font-family: Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            height: 3rem;
+            line-height: 3rem;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: calc(100vh - 3rem);
+        }
+
+        button {
+            padding: 15px;
+        }
+
+        #cards {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            padding: 0;
+            margin: 0;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 3rem;
+        }
+
+        img {
+            width: 90px;
+        }
+    </style>
+</head>
+<body>
+<h1>Lucky 13 Generator</h1>
+<div class="container">
+    <ul id="cards"></ul>
+    <button onclick="pick13()">Draw</button>
+</div>
+</body>
+</html>
