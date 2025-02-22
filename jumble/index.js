@@ -30,15 +30,17 @@ function generateJumble() {
     if (!anagram) {
         return;
     }
-    const pattern = document.getElementById("anagram-pattern").value;
 
     const shuffled = Array(anagram.length)
     const lettersToBeShuffled = anagram.split('')
+    const pattern = document.getElementById("anagram-pattern").value;
 
-    for (let i = 0; i < anagram.length; i++) {
-        if (pattern[i] !== '.') {
-            shuffled[i] = pattern[i];
-            lettersToBeShuffled[i] = undefined;
+    if (pattern) {
+        for (let i = 0; i < anagram.length; i++) {
+            if (pattern[i] !== '.') {
+                shuffled[i] = pattern[i];
+                lettersToBeShuffled[i] = undefined;
+            }
         }
     }
 
