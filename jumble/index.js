@@ -55,27 +55,31 @@ function generateJumble() {
     containerElt.innerHTML = "";
     const format = document.getElementById("format").value.split("").map(it => parseInt(it));
     if (format.length > 0 && format.reduce((acc, curr) => acc + curr, 0) === shuffled.length) {
-        format.forEach(length => {
-            const div = document.createElement("div");
-            div.classList.add("letter-container");
+        format.forEach((length, idx) => {
+            const div = createLetterContainer()
             for (let i = 0; i < length; i++) {
-                const letter = shuffled.pop();
-                const span = document.createElement("span");
-                span.innerText = letter;
-                div.append(span);
+                const letter = shuffled[(length * idx) + i]
+                appendLetter(div, letter);
             }
             containerElt.append(div);
         });
     } else {
-        const div = document.createElement("div");
-        div.classList.add("letter-container");
-        shuffled.forEach(letter => {
-            const span = document.createElement("span");
-            span.innerText = letter;
-            div.append(span);
-        });
+        const div = createLetterContainer()
+        shuffled.forEach(letter => appendLetter(div, letter));
         containerElt.append(div);
     }
+}
+
+function createLetterContainer() {
+    const div = document.createElement("div");
+    div.classList.add("letter-container");
+    return div
+}
+
+function appendLetter(div, letter) {
+    const span = document.createElement("span");
+    span.innerText = letter;
+    div.append(span);
 }
 
 function check() {
