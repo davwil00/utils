@@ -22,6 +22,12 @@
         </button>
     </li>
     <li class="nav-item" role="presentation">
+        <button class="nav-link" id="word-matcher-tab" data-bs-toggle="tab"
+                data-bs-target="#word-matcher-pane" type="button" role="tab" aria-controls="word-matcher"
+                aria-selected="false">Word Matcher
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
         <button class="nav-link" id="word-finder-tab" data-bs-toggle="tab"
                 data-bs-target="#word-finder-pane" type="button" role="tab" aria-controls="word-finder"
                 aria-selected="false">Word Finder
@@ -77,20 +83,37 @@
         <button type="button" onclick="check();" class="btn btn-secondary">Check</button>
         <button type="button" onclick="clearInput();" class="btn btn-danger">Clear</button>
     </div>
-    <div class="tab-pane" id="word-finder-pane" role="tabpanel" aria-labelledby="word-finder-tab">
+    <div class="tab-pane" id="word-matcher-pane" role="tabpanel" aria-labelledby="word-matcher-tab">
         <div class="col-sm-3 mb-3">
             <div class="input-group">
                 <div class="form-floating">
-                    <input type="text" id="word-finder-pattern" name="pattern" class="form-control"/>
-                    <label for="word-finder-pattern">Pattern</label>
+                    <input type="text" id="word-matcher-pattern" name="pattern" class="form-control"/>
+                    <label for="word-matcher-pattern">Pattern</label>
                 </div>
-                <button type="button" onclick="clearInput('word-finder-pattern')" class="btn btn-sm bg-transparent"
+                <button type="button" onclick="clearInput('word-matcher-pattern')" class="btn btn-sm bg-transparent"
                         style="margin-left: -40px; z-index: 100;">
                     <i class="bi-x-lg"></i>
                 </button>
             </div>
         </div>
         <button type="button" onclick="findWordMatchingPattern();" class="btn btn-secondary">Find Matching Words
+        </button>
+        <button type="button" onclick="clearInput();" class="btn btn-danger">Clear</button>
+    </div>
+    <div class="tab-pane" id="word-finder-pane" role="tabpanel" aria-labelledby="word-finder-tab">
+        <div class="col-sm-3 mb-3">
+            <div class="input-group">
+                <div class="form-floating">
+                    <input type="text" id="word-anagram" class="form-control"/>
+                    <label for="word-anagram">Anagram</label>
+                </div>
+                <button type="button" onclick="clearInput('word-anagram')" class="btn btn-sm bg-transparent"
+                        style="margin-left: -40px; z-index: 100;">
+                    <i class="bi-x-lg"></i>
+                </button>
+            </div>
+        </div>
+        <button type="button" onclick="findWordsFromAnagram();" class="btn btn-secondary">Find Matching Words
         </button>
         <button type="button" onclick="clearInput();" class="btn btn-danger">Clear</button>
     </div>

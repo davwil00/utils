@@ -7,7 +7,7 @@ function shuffle(anagram) {
 }
 
 function findWordMatchingPattern() {
-    const pattern = document.getElementById("word-finder-pattern").value;
+    const pattern = document.getElementById("word-matcher-pattern").value;
     const regex = RegExp(`^${pattern}$`);
     const wordList = document.getElementById("word-list");
     wordList.innerHTML = "";
@@ -25,30 +25,83 @@ function findWordMatchingPattern() {
     }
 }
 
+function mapsAreEqual (m1, m2) {
+    return m1.size === m2.size && Array.from(m1.keys()).every((key) => m1.get(key) === m2.get(key));
+}
+
+function findWordsFromAnagram() {
+    const anagram = document.getElementById("word-anagram").value
+    const anagramMap = makeWordMap(anagram)
+    const matchingWords = dict.filter(word => {
+        const wordMap = makeWordMap(word)
+        return mapsAreEqual(wordMap, anagramMap) && word !== anagram
+    })
+
+    const wordList = document.getElementById("word-list");
+    wordList.innerHTML = "";
+    if (matchingWords.length === 0) {
+        const li = document.createElement("li");
+        li.innerText = "No words found";
+        wordList.append(li);
+    } else {
+        matchingWords.forEach(word => {
+            const li = document.createElement("li");
+            li.innerText = word;
+            wordList.append(li);
+        });
+    }
+}
+
+function makeWordMap(word) {
+    return word.split('').reduce((acc, curr) => {
+        if (curr === ' ') {
+            return acc
+        }
+        if (acc.has(curr)) {
+            acc.set(curr, acc.get(curr) + 1);
+        } else {
+            acc.set(curr, 1);
+        }
+        return acc;
+    }, new Map())
+}
+
 function generateJumble() {
     const anagram = document.getElementById("anagram").value.replaceAll(" ", "");
     if (!anagram) {
         return;
     }
 
-    const shuffled = Array(anagram.length)
-    const lettersToBeShuffled = anagram.split('')
-    const pattern = document.getElementById("anagram-pattern").value;
+    const anagramLetters = anagram.split('')
+    const pattern = document.getElementById("anagram-pattern").value.split('')
+    let shuffled
 
     if (pattern) {
-        for (let i = 0; i < anagram.length; i++) {
-            if (pattern[i] !== '.') {
-                shuffled[i] = pattern[i];
-                lettersToBeShuffled[i] = undefined;
+        if (pattern.length !== anagramLetters.length) {
+            document.getElementById("anagram-pattern").style.color = "red";
+            return;
+        }
+        document.getElementById("anagram-pattern").style.color = "";
+        const fixedLetters = pattern.filter(letter => letter !== '.')
+        const lettersToBeShuffled = [...anagramLetters]
+        fixedLetters.forEach(letter => {
+            const index = lettersToBeShuffled.indexOf(letter)
+            if (index >= 0) {
+                lettersToBeShuffled.splice(index, 1);
             }
-        }
-    }
+        })
+        const shuffledRemaining = shuffle(lettersToBeShuffled);
+        shuffled = []
+        pattern.forEach(char => {
+            if (char === '.') {
+                shuffled.push(shuffledRemaining.pop());
+            } else {
+                shuffled.push(char);
+            }
+        })
 
-    const shuffledRemaining = shuffle(lettersToBeShuffled.filter(it => it !== undefined));
-    for (let i = 0; i < shuffled.length; i++) {
-        if (shuffled[i] === undefined) {
-            shuffled[i] = shuffledRemaining.pop()
-        }
+    } else {
+        shuffled = shuffle(anagramLetters);
     }
 
     const containerElt = document.getElementById("container");
