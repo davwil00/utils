@@ -76,7 +76,7 @@ function generateJumble() {
     const pattern = document.getElementById("anagram-pattern").value.split('')
     let shuffled
 
-    if (pattern) {
+    if (pattern.length) {
         if (pattern.length !== anagramLetters.length) {
             document.getElementById("anagram-pattern").style.color = "red";
             return;
